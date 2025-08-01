@@ -1,10 +1,25 @@
 import express from "express";
-import { register, login, logout } from "../controllers/authController.js"; // Import login & logout too
+import {
+  register,
+  login,
+  logout,
+  sendVerifyOtp,
+  verifyEmail,
+  isAuthenticated
+} from "../controllers/authController.js";
+
+import userAuth from "../middleware/userAuth.js";
 
 const authRouter = express.Router();
 
+// Auth routes
 authRouter.post('/register', register);
-authRouter.post('/login', login); // Add login function
-authRouter.post('/logout', logout); // Add logout function
+authRouter.post('/login', login);
+authRouter.post('/logout', logout);
 
-export default authRouter; // ✅ Ensure this is default export
+// Email verification routes (protected)
+authRouter.post('/send-verify-otp', userAuth, sendVerifyOtp);
+authRouter.post('/verify-account', userAuth, verifyEmail);
+authRouter.post('/is-auth', userAuth, isAuthenticated);
+
+export default authRouter;
