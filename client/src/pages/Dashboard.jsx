@@ -34,14 +34,10 @@ const DashboardPage = ({ userName }) => {
 
   const getTxnIcon = (type) => {
     switch (type) {
-      case "Deposit":
-        return <span className="text-green-500">⬇️</span>;
-      case "Withdraw":
-        return <span className="text-red-500">⬆️</span>;
-      case "Transfer":
-        return <span className="text-yellow-500">➡️</span>;
-      default:
-        return null;
+      case "Deposit": return <span className="text-green-500">⬇️</span>;
+      case "Withdraw": return <span className="text-red-500">⬆️</span>;
+      case "Transfer": return <span className="text-yellow-500">➡️</span>;
+      default: return null;
     }
   };
 
@@ -105,7 +101,9 @@ const DashboardPage = ({ userName }) => {
 
           {/* Recent Transactions */}
           <div className="p-6 bg-white border border-indigo-200 shadow-lg rounded-xl">
-            <h2 className="mb-6 text-lg font-semibold text-gray-700">Recent Transactions</h2>
+            <h2 className="mb-6 text-lg font-semibold text-gray-700">
+              Recent Transactions
+            </h2>
             <ul>
               {transactions.map((txn) => (
                 <li

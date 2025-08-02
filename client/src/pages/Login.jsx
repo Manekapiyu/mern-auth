@@ -6,37 +6,39 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AppContext } from '../context/AppContext';
 
 const LoginPage = ({ setCurrentPage }) => {
-  const { backendUrl, setIsLoggedin } = useContext(AppContext);
+  const { backendUrl, setIsLoggedin ,getUserData } = useContext(AppContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const { data } = await axios.post(`${backendUrl}/api/auth/login`, {
-        email,
-        password,
-      });
+  try {
+    const { data } = await axios.post(
+      `${backendUrl}/api/auth/login`,
+      { email, password },
+      { withCredentials: true } // ✅ Include credentials
+    );
 
-      if (data.success) {
-        toast.success('Login successful!');
-        setIsLoggedin(true);
-        setCurrentPage('dashboard');
-      } else {
-        toast.error(data.message || 'Invalid email or password');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      toast.error(error.response?.data?.message || 'Server error. Please try again.');
-    } finally {
-      setLoading(false);
+    if (data.success) {
+      toast.success('Login successful!');
+      setIsLoggedin(true);
+      await getUserData(); // ✅ Await to ensure proper data fetching
+      setCurrentPage('dashboard');
+    } else {
+      toast.error(data.message || 'Invalid email or password');
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+    toast.error(error.response?.data?.message || 'Server error. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen p-3 bg-gradient-to-br from-slate-600 to-indigo-800">
