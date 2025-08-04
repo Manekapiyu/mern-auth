@@ -7,7 +7,8 @@ const Header = ({ setCurrentPage }) => (
       <span className="block mt-2 text-blue-200">Powering Your Operations</span>
     </h1>
     <p className="max-w-3xl mx-auto mb-16 text-lg text-blue-200 sm:text-xl drop-shadow">
-      Delivering reliable, secure backend infrastructure with seamless transaction processing and robust data protection.
+      Delivering reliable, secure backend infrastructure with seamless
+      transaction processing and robust data protection.
     </p>
 
     <div className="flex flex-col items-center justify-center gap-6 sm:flex-row sm:justify-center">

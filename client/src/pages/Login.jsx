@@ -1,53 +1,59 @@
-import React, { useContext, useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, Lock, User } from 'lucide-react';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { AppContext } from '../context/AppContext';
+import React, { useContext, useState } from "react";
+import { ArrowLeft, Eye, EyeOff, Lock, User } from "lucide-react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AppContext } from "../context/AppContext";
 
 const LoginPage = ({ setCurrentPage }) => {
-  const { backendUrl, setIsLoggedin ,getUserData } = useContext(AppContext);
+  const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContext);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
- const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const { data } = await axios.post(
-      `${backendUrl}/api/auth/login`,
-      { email, password },
-      { withCredentials: true } // ✅ Include credentials
-    );
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
 
-    if (data.success) {
-      toast.success('Login successful!');
-      setIsLoggedin(true);
-      await getUserData(); // ✅ Await to ensure proper data fetching
-      setCurrentPage('dashboard');
-    } else {
-      toast.error(data.message || 'Invalid email or password');
+      if (data.success) {
+        toast.success("Login successful!", { autoClose: 800 });
+        setIsLoggedin(true);
+        await getUserData();
+
+        setTimeout(() => {
+          toast.dismiss(); // remove any lingering toasts
+          setCurrentPage("dashboard");
+        }, 800);
+      } else {
+        toast.error(data.message || "Invalid email or password");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error(
+        error.response?.data?.message || "Server error. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    toast.error(error.response?.data?.message || 'Server error. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen p-3 bg-gradient-to-br from-slate-600 to-indigo-800">
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+      <ToastContainer position="top-right" autoClose={1000} hideProgressBar />
 
       <div className="w-full max-w-md">
         <div className="p-8 bg-white shadow-2xl rounded-2xl">
           <button
-            onClick={() => setCurrentPage('home')}
+            onClick={() => setCurrentPage("home")}
             className="flex items-center mb-3 text-gray-600 hover:text-gray-800"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -64,7 +70,9 @@ const LoginPage = ({ setCurrentPage }) => {
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
               <div className="relative">
                 <User className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
                 <input
@@ -79,11 +87,13 @@ const LoginPage = ({ setCurrentPage }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
               <div className="relative">
                 <Lock className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -106,12 +116,15 @@ const LoginPage = ({ setCurrentPage }) => {
 
             <div className="flex items-center justify-between">
               <label className="flex items-center">
-                <input type="checkbox" className="text-blue-600 border-gray-300 rounded" />
+                <input
+                  type="checkbox"
+                  className="text-blue-600 border-gray-300 rounded"
+                />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
               <button
                 type="button"
-                onClick={() => setCurrentPage('reset')}
+                onClick={() => setCurrentPage("reset-password")}
                 className="text-sm text-blue-600 hover:text-blue-800"
               >
                 Forgot password?
@@ -123,14 +136,14 @@ const LoginPage = ({ setCurrentPage }) => {
               disabled={loading}
               className="w-full py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Signing In...' : 'Sign In'}
+              {loading ? "Signing In..." : "Sign In"}
             </button>
           </form>
 
           <div className="mt-6 text-center text-gray-600">
-            Don't have an account?{' '}
+            Don’t have an account?{" "}
             <button
-              onClick={() => setCurrentPage('register')}
+              onClick={() => setCurrentPage("register")}
               className="font-semibold text-blue-600 hover:text-blue-800"
             >
               Sign up

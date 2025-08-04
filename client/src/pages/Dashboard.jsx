@@ -13,7 +13,7 @@ import { AppContext } from "../context/AppContext";
 import DashboardNavbar from "../pages/DashboardNavbar"; // Adjust path if needed
 
 const DashboardPage = ({ userName }) => {
-  const { backendUrl } = useContext(AppContext);
+  const {backendUrl} = useContext(AppContext);
 
   const accountBalance = 105000.75;
 
@@ -34,10 +34,14 @@ const DashboardPage = ({ userName }) => {
 
   const getTxnIcon = (type) => {
     switch (type) {
-      case "Deposit": return <span className="text-green-500">⬇️</span>;
-      case "Withdraw": return <span className="text-red-500">⬆️</span>;
-      case "Transfer": return <span className="text-yellow-500">➡️</span>;
-      default: return null;
+      case "Deposit":
+        return <span className="text-green-500">⬇️</span>;
+      case "Withdraw":
+        return <span className="text-red-500">⬆️</span>;
+      case "Transfer":
+        return <span className="text-yellow-500">➡️</span>;
+      default:
+        return null;
     }
   };
 
@@ -56,13 +60,13 @@ const DashboardPage = ({ userName }) => {
 
   return (
     <>
-
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
 
       <div className="min-h-screen px-4 py-8 bg-gradient-to-tr from-indigo-50 to-white">
         <div className="max-w-5xl mx-auto">
           <h1 className="mb-8 text-4xl font-extrabold text-gray-900">
-            Welcome back, <span className="text-indigo-600">{userName || "User"}</span>!
+            Welcome back,{" "}
+            <span className="text-indigo-600">{userName || "Maneka.."}</span>!
           </h1>
 
           {/* Balance and Chart */}
@@ -84,7 +88,9 @@ const DashboardPage = ({ userName }) => {
 
             {/* Monthly Spending Chart */}
             <div className="flex-1 p-6 mt-8 bg-white border border-indigo-200 shadow-lg md:mt-0 rounded-xl">
-              <h2 className="mb-4 text-lg font-semibold text-gray-700">Monthly Spending</h2>
+              <h2 className="mb-4 text-lg font-semibold text-gray-700">
+                Monthly Spending
+              </h2>
               <div style={{ width: "100%", height: 260 }}>
                 <ResponsiveContainer>
                   <BarChart data={spendingData}>
@@ -92,7 +98,11 @@ const DashboardPage = ({ userName }) => {
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="amount" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                    <Bar
+                      dataKey="amount"
+                      fill="#6366f1"
+                      radius={[6, 6, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -111,8 +121,12 @@ const DashboardPage = ({ userName }) => {
                   className="flex items-center justify-between py-3 border-b last:border-b-0"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-indigo-100 rounded-full">{getTxnIcon(txn.type)}</div>
-                    <span className="font-medium text-gray-800">{txn.type}</span>
+                    <div className="p-2 bg-indigo-100 rounded-full">
+                      {getTxnIcon(txn.type)}
+                    </div>
+                    <span className="font-medium text-gray-800">
+                      {txn.type}
+                    </span>
                   </div>
                   <span className={`font-semibold ${getAmountColor(txn.type)}`}>
                     Rs. {txn.amount.toLocaleString()}

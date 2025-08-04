@@ -1,46 +1,40 @@
+// server.js or app.js
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/mongodb.js';
 import authRouter from './routes/authRoutes.js';
-import morgan from 'morgan'; // optional
 import userRouter from './routes/userRoutes.js';
-
+import userAuth from './middleware/userAuth.js';
 
 dotenv.config();
-
-console.log("JWT_SECRET:", process.env.JWT_SECRET);  // Confirm env is loaded
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Connect to MongoDB
+// Connect to DB
 connectDB();
 
-const allowedOrigins = ['http://localhost:5173']
-// Middleware
-app.use(express.json());
 app.use(cors({
-  origin: allowedOrigins, // your frontend
-  credentials: true
+  origin: 'http://localhost:5173',
+  credentials: true,
 }));
+app.use(express.json());
 app.use(cookieParser());
 
-// API Routes
-app.get('/', (req, res) => res.send("API working"));
+// Working base route
+app.get('/', (req, res) => {
+  res.send('API running');
+});
+
+// ✅ Authenticated route
+app.get('/api/auth/is-auth', userAuth, (req, res) => {
+  res.json({ success: true, message: 'User authenticated', userId: req.userId });
+});
+
+// Routes
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 
-
-
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ success: false, message: "Internal Server Error" });
-});
-
-// Start Server
-app.listen(PORT, () => {
-  console.log(`✅ Server started on PORT: ${PORT}`);
-});
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));

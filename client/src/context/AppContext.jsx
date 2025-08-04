@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export const AppContext = createContext();
@@ -8,22 +8,49 @@ export const AppContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [resetEmail, setResetEmail] = useState(""); // ✅ NEW
+
+  const getAuthState = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/auth/is-auth`, {
+        withCredentials: true,
+      });
+      if (data.success) {
+        setIsLoggedin(true);
+        await getUserData();
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to authenticate"
+      );
+    }
+  };
+
+  useEffect(() => {
+    getAuthState();
+  });
 
   const getUserData = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/user/data`, {
-        withCredentials: true, // ✅ Send cookies
+        withCredentials: true,
       });
 
       if (data.success) {
         setUserData(data.userData);
-        setIsLoggedin(true); // ✅ Optional: confirm login
+        setIsLoggedin(true);
       } else {
         toast.error(data.message || "Failed to fetch user data.");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Unauthorized. Please log in.");
-      setIsLoggedin(false); // ✅ Reset login if fetch fails
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Unauthorized. Please log in."
+      );
+      setIsLoggedin(false);
     }
   };
 
@@ -34,11 +61,11 @@ export const AppContextProvider = (props) => {
     userData,
     setUserData,
     getUserData,
+    resetEmail,
+    setResetEmail,
   };
 
   return (
-    <AppContext.Provider value={value}>
-      {props.children}
-    </AppContext.Provider>
+    <AppContext.Provider value={value}>{props.children}</AppContext.Provider>
   );
 };
