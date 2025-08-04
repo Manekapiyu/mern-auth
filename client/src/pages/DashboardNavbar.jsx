@@ -1,24 +1,46 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import Logo from "../assets/logo.png";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { AppContext } from "../context/AppContext";
 
 const DashboardNavbar = ({ setCurrentPage }) => {
+  const { userData, backendUrl, setUserData, setIsLoggedin } =
+    useContext(AppContext);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const sendVerificationOtp = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(
+        `${backendUrl}/api/auth/send-verify-otp`
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setCurrentPage("email-verify"); // Navigate to email verification page
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Error sending OTP: " + error.message);
+    }
+  };
 
   const handleLogout = async () => {
     try {
-      // Optional backend logout (ignore failure)
-      await axios.post("http://localhost:4000/api/logout");
+      await axios.post(`${backendUrl}/api/logout`);
     } catch (err) {
       console.warn("Backend logout failed (proceeding anyway):", err);
     }
 
-    // Always clear token and redirect
     localStorage.removeItem("token");
+    setUserData(null);
+    setIsLoggedin(false);
     toast.success("Logged out successfully!");
 
     setTimeout(() => {
-      setCurrentPage("home"); // Use the prop to navigate back to home page
+      setCurrentPage("home");
     }, 1000);
   };
 
@@ -36,15 +58,44 @@ const DashboardNavbar = ({ setCurrentPage }) => {
             <span className="text-2xl font-bold text-blue-600">SecureBank</span>
           </div>
 
-          {/* Logout Button */}
-          <div>
-            <button
-              onClick={handleLogout}
-              className="px-5 py-2 font-semibold text-white transition bg-blue-600 rounded-lg hover:bg-blue-700"
-            >
-              Logout
-            </button>
-          </div>
+          {userData && (
+            <div className="relative">
+              <div
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex items-center justify-center w-10 h-10 text-white bg-blue-600 rounded-full cursor-pointer hover:bg-blue-700"
+              >
+                {userData.name
+                  ? userData.name.charAt(0).toUpperCase()
+                  : userData.email.charAt(0).toUpperCase()}
+              </div>
+
+              {showDropdown && (
+                <div className="absolute right-0 z-50 w-48 mt-2 bg-white border rounded shadow-md">
+                  {!userData.isAccountVerified && (
+                    <button
+                      onClick={() => {
+                        setShowDropdown(false);
+                        sendVerificationOtp(); 
+                      }}
+                      className="block w-full px-4 py-2 text-sm text-left hover:bg-blue-100"
+                    >
+                      Verify Email
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setShowDropdown(false);
+                      handleLogout();
+                    }}
+                    className="block w-full px-4 py-2 text-sm text-left hover:bg-blue-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </nav>

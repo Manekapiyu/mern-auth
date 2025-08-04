@@ -1,16 +1,16 @@
-import React, { useContext, useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { AppContext } from '../context/AppContext';
+import React, { useContext, useState } from "react";
+import { ArrowLeft, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import toast from "react-hot-toast";
+import { AppContext } from "../context/AppContext";
 
 const RegisterPage = ({ setCurrentPage }) => {
   const { backendUrl } = useContext(AppContext); // ✅ Pull from context
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
@@ -22,16 +22,16 @@ const RegisterPage = ({ setCurrentPage }) => {
       const response = await fetch(`${backendUrl}/api/auth/register`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await response.json();
 
       if (data.success) {
         toast.success(data.message || "Check your email for verification");
-        setCurrentPage('login');
+        setCurrentPage("login");
       } else {
         toast.error(data.message || "Registration failed");
       }
@@ -48,7 +48,7 @@ const RegisterPage = ({ setCurrentPage }) => {
       <div className="w-full max-w-md">
         <div className="p-8 bg-white shadow-2xl rounded-2xl">
           <button
-            onClick={() => setCurrentPage('home')}
+            onClick={() => setCurrentPage("home")}
             className="flex items-center mb-6 text-gray-600 hover:text-gray-800"
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
@@ -65,7 +65,7 @@ const RegisterPage = ({ setCurrentPage }) => {
           <div className="space-y-6">
             <div className="relative">
               <User className="absolute left-3 top-3.5 text-gray-400" />
-              <input 
+              <input
                 type="text"
                 placeholder="Full Name"
                 className="w-full py-3 pl-10 pr-4 border rounded-lg"
@@ -88,7 +88,7 @@ const RegisterPage = ({ setCurrentPage }) => {
             <div className="relative">
               <Lock className="absolute left-3 top-3.5 text-gray-400" />
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className="w-full py-3 pl-10 pr-10 border rounded-lg"
                 value={password}
@@ -124,9 +124,9 @@ const RegisterPage = ({ setCurrentPage }) => {
 
             <div className="text-center">
               <p className="text-gray-600">
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <button
-                  onClick={() => setCurrentPage('login')}
+                  onClick={() => setCurrentPage("login")}
                   className="font-semibold text-green-600"
                 >
                   Sign in
