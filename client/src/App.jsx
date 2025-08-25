@@ -55,7 +55,9 @@ const App = () => {
           <HomePage />
         </>
       )}
-      {currentPage === "login" && <LoginPage setCurrentPage={setCurrentPage} />}
+      {currentPage === "login" && (
+        <LoginPage setCurrentPage={setCurrentPage} />
+      )}
       {currentPage === "register" && (
         <RegisterPage setCurrentPage={setCurrentPage} />
       )}
@@ -68,9 +70,9 @@ const App = () => {
       {currentPage === "dashboard" && (
         <DashboardPage setCurrentPage={setCurrentPage} />
       )}
-      {currentPage === "otp-verification" && (
-        <OTPVerificationPage setCurrentPage={setCurrentPage} />
-      )}
+      {currentPage === 'otp-verification' && (
+  <OTPVerificationPage setCurrentPage={setCurrentPage} />
+)}
     </div>
   );
 };

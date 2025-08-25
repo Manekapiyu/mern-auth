@@ -8,10 +8,13 @@ const Navbar = ({ setCurrentPage }) => (
       <div className="flex items-center justify-between h-16">
         {/* Logo */}
         <div className="flex items-center space-x-3">
-          <img src={Logo} alt="Logo" className="object-contain w-20 h-20 mix-blend-multiply" />
+          <img
+            src={Logo}
+            alt="Logo"
+            className="object-contain w-20 h-20 mix-blend-multiply"
+          />
 
-      
-          <span className="text-xl font-bold text-blue-600">SecureBank</span>
+          <span className="text-xl font-bold text-blue-600">Banklytix</span>
         </div>
 
         {/* Buttons */}

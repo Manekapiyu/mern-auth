@@ -13,7 +13,7 @@ import { AppContext } from "../context/AppContext";
 import DashboardNavbar from "../pages/DashboardNavbar"; // Adjust path if needed
 
 const DashboardPage = ({ userName }) => {
-  const {backendUrl} = useContext(AppContext);
+  const { backendUrl } = useContext(AppContext);
 
   const accountBalance = 105000.75;
 

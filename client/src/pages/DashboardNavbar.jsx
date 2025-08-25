@@ -18,8 +18,7 @@ const DashboardNavbar = ({ setCurrentPage }) => {
 
       if (data.success) {
         toast.success(data.message);
-        setCurrentPage("email-verify"); // Navigate to email verification page
-      } else {
+        setCurrentPage("email-verify"); 
         toast.error(data.message);
       }
     } catch (error) {
@@ -55,7 +54,7 @@ const DashboardNavbar = ({ setCurrentPage }) => {
               alt="Logo"
               className="object-contain w-16 h-16 mix-blend-multiply"
             />
-            <span className="text-2xl font-bold text-blue-600">SecureBank</span>
+            <span className="text-2xl font-bold text-blue-600">Banklytix</span>
           </div>
 
           {userData && (

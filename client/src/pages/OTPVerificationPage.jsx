@@ -1,19 +1,21 @@
 import React, { useState, useContext } from "react";
-import { Lock, KeyRound, ShieldCheck } from "lucide-react";
+import { Lock, KeyRound, ShieldCheck, Mail } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { AppContext } from "../context/AppContext";
 
 const OTPVerificationPage = ({ setCurrentPage }) => {
+  const { backendUrl, resetEmail } = useContext(AppContext);
+
+  const [email, setEmail] = useState(resetEmail || ""); // ✅ fallback to context but allow manual entry
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { backendUrl, resetEmail } = useContext(AppContext);
 
   const handleVerifyAndReset = async () => {
-    if (!otp || !newPassword || !confirmPassword) {
+    if (!email || !otp || !newPassword || !confirmPassword) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -32,16 +34,14 @@ const OTPVerificationPage = ({ setCurrentPage }) => {
 
     try {
       const res = await axios.post(`${backendUrl}/api/auth/reset-password`, {
-        email: resetEmail,
+        email,
         otp,
         newPassword,
       });
 
       if (res.data.success) {
         toast.success("Password reset successful!");
-        setTimeout(() => {
-          setCurrentPage("login");
-        }, 2000);
+        setTimeout(() => setCurrentPage("login"), 2000); // ✅ redirect after success
       } else {
         toast.error(res.data.message || "Verification failed");
       }
@@ -57,18 +57,34 @@ const OTPVerificationPage = ({ setCurrentPage }) => {
       <div className="w-full max-w-md">
         <ToastContainer />
         <div className="p-8 bg-white shadow-2xl rounded-2xl">
+          {/* Icon */}
           <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-indigo-100 rounded-full">
             <ShieldCheck className="w-8 h-8 text-indigo-600" />
           </div>
+
+          {/* Title */}
           <h2 className="mb-2 text-3xl font-bold text-center text-gray-900">
             OTP Verification
           </h2>
           <p className="mb-6 text-sm text-center text-gray-600">
-            Enter the 6-digit OTP sent to{" "}
-            <span className="font-medium">{resetEmail}</span>
+            Enter the details to reset your password
           </p>
 
           <div className="space-y-4">
+            {/* Email */}
+            <div className="relative">
+              <Mail className="absolute left-3 top-3.5 text-gray-400" />
+              <input
+                type="email"
+                placeholder="Email Address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full py-3 pl-10 pr-4 border rounded-lg"
+                disabled={loading}
+              />
+            </div>
+
+            {/* OTP */}
             <div className="relative">
               <KeyRound className="absolute left-3 top-3.5 text-gray-400" />
               <input
@@ -81,6 +97,7 @@ const OTPVerificationPage = ({ setCurrentPage }) => {
               />
             </div>
 
+            {/* New Password */}
             <div className="relative">
               <Lock className="absolute left-3 top-3.5 text-gray-400" />
               <input
@@ -93,6 +110,7 @@ const OTPVerificationPage = ({ setCurrentPage }) => {
               />
             </div>
 
+            {/* Confirm Password */}
             <div className="relative">
               <Lock className="absolute left-3 top-3.5 text-gray-400" />
               <input
@@ -105,6 +123,7 @@ const OTPVerificationPage = ({ setCurrentPage }) => {
               />
             </div>
 
+            {/* Submit */}
             <button
               onClick={handleVerifyAndReset}
               disabled={loading}
@@ -118,6 +137,7 @@ const OTPVerificationPage = ({ setCurrentPage }) => {
             </button>
           </div>
 
+          {/* Back to Login */}
           <div className="mt-6 text-center">
             <p className="text-gray-600">
               Back to{" "}

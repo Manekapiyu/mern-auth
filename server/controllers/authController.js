@@ -1,7 +1,8 @@
+// authController.js
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import transporter from "../config/nodemailer.js";
+import { sendOtpEmail } from "../utils/sendOtpEmail.js";
 
 // =================== REGISTER ===================
 export const register = async (req, res) => {
@@ -32,14 +33,8 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: "Welcome to Web",
-      text: `Welcome to the website. Your account has been created with email ID: ${email}`,
-    };
-
-    await transporter.sendMail(mailOptions);
+    // Send Welcome Email (HTML)
+    await sendOtpEmail("welcome", email, null, name);
 
     return res.json({
       success: true,
@@ -131,18 +126,12 @@ export const sendVerifyOtp = async (req, res) => {
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     user.verifyOtp = otp;
-    user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
+    user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000; // 24h
 
     await user.save();
 
-    const mailOption = {
-      from: process.env.SENDER_EMAIL,
-      to: user.email,
-      subject: "Account Verification OTP",
-      text: `Your OTP is ${otp}. Verify your account using this OTP.`,
-    };
-
-    await transporter.sendMail(mailOption);
+    // Send Verification OTP Email (HTML)
+    await sendOtpEmail("verify", user.email, otp, user.name);
 
     res.json({ success: true, message: "Verification OTP sent to email" });
   } catch (error) {
@@ -185,17 +174,16 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
-// ✅ Check if user is authenticated (should be protected with JWT middleware)
+// =================== IS AUTHENTICATED ===================
 export const isAuthenticated = async (req, res) => {
   try {
-    // If you're using middleware, user info should be attached to req.user
     return res.json({ success: true, message: "User is authenticated" });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
 };
 
-// ✅ Send Password Reset OTP
+// =================== SEND RESET OTP ===================
 export const sendResetOtp = async (req, res) => {
   const { email } = req.body;
 
@@ -215,14 +203,8 @@ export const sendResetOtp = async (req, res) => {
 
     await user.save();
 
-    const mailOptions = {
-      from: process.env.SENDER_EMAIL,
-      to: email,
-      subject: "Password Reset OTP",
-      text: `Your OTP for resetting your password is ${otp}. Do not share this OTP with anyone. It will expire in 15 minutes.`,
-    };
-
-    await transporter.sendMail(mailOptions);
+    // Send Reset OTP Email (HTML)
+    await sendOtpEmail("reset", email, otp, user.name);
 
     return res.json({ success: true, message: "OTP sent to your email" });
   } catch (error) {
@@ -230,7 +212,7 @@ export const sendResetOtp = async (req, res) => {
   }
 };
 
-// ✅ Reset Password
+// =================== RESET PASSWORD ===================
 export const resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
