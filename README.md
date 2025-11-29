@@ -2,6 +2,7 @@
 
 A full-stack MERN (MongoDB, Express, React, Node.js) authentication system with JWT token support. Users can register, log in, and securely access protected routes.
 
+
 ---
 
 ## 🌐 Features
